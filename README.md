@@ -12,9 +12,9 @@ dreport is a command-line tool for converting dart & flutter test and analysis r
 dart pub global activate dreport
 
 # Convert to GitLab Code Quality format
-dart analyze . | dreport convert --format gitlab --output report.json
+dart analyze . | dreport analyze convert --format gitlab --output report.json
 
 # Or use input
 dart analyze . > report.txt
-dreport convert --format gitlab --output report.json --input report.txt
+dreport analyze convert --format gitlab --output report.json --input report.txt
 ```
