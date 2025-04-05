@@ -1,6 +1,8 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:dreport/src/cli/commands/base_command.dart';
+import 'package:dreport/src/core/analyzer/gitlab/gitlab_issue_codec.dart';
 import 'package:dreport/src/core/analyzer/parser.dart';
 
 /// Formats that the analysis results can be converted to.
@@ -55,5 +57,20 @@ final class AnalyzeConvertCommand extends BaseCommand {
 
     logger.trace('Parsed input:\n$parsedInput');
     logger.trace(parsedInput.issues.join('\n'));
+
+    final outputString = switch (output) {
+      OutputFormat.gitlab => _outputGitlab(parsedInput),
+    };
+
+    logger.trace('Output:\n$outputString');
+  }
+
+  String _outputGitlab(AnalyzerResult parsedInput) {
+    return jsonEncode(
+      parsedInput.issues
+          .map(gitlabIssueCodec.encode)
+          .map((issue) => issue.toJson())
+          .toList(growable: false),
+    );
   }
 }
