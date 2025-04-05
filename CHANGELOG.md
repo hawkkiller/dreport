@@ -1,3 +1,4 @@
 ## 0.0.1
 
-- Initial version of `dreport` package.
+- Implemented parser of dart analyzer output
+- Implemented converter to GitLab Code Quality format from dart analyzer output
