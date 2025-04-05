@@ -1,3 +1,7 @@
+## 0.0.4
+
+- Lower SDK constraint to 3.0.0
+
 ## 0.0.3
 
 - Added dreport.dart to list of executables in pubspec.yaml
