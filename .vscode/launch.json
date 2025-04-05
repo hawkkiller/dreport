@@ -13,7 +13,7 @@
         "analyze",
         "convert",
         "--input", 
-        "analyzer_log.txt",
+        "analyzer_raw_output.txt",
         "--output",
         "analyzer_log.json",
         "-v"

@@ -102,23 +102,10 @@ class AnalyzerDecoder extends Converter<String, AnalyzerResult> {
           currentAdditional = null;
         }
 
-        // Parse issue line using regex
-        final issueRegex = RegExp(
-          r'^(\w+)\s+-\s+([^:]+):(\d+):(\d+)\s+-\s+(.+)\s+-\s+(\w+(?:_\w+)*)$',
-        );
-        final match = issueRegex.firstMatch(line);
-
-        if (match != null) {
-          issues.add(
-            AnalyzerIssue(
-              severity: IssueSeverity.fromString(match.group(1)!),
-              filePath: match.group(2)!,
-              line: int.parse(match.group(3)!),
-              column: int.parse(match.group(4)!),
-              message: match.group(5)!,
-              code: match.group(6)!,
-            ),
-          );
+        // Try parsing both formats
+        final issue = _parseIssueLine(line);
+        if (issue != null) {
+          issues.add(issue);
         }
       } else if (line.startsWith('-')) {
         // This is an additional info line
@@ -141,6 +128,44 @@ class AnalyzerDecoder extends Converter<String, AnalyzerResult> {
     }
 
     return AnalyzerResult(issues: issues);
+  }
+
+  /// Parses an issue line in either the old or new format
+  AnalyzerIssue? _parseIssueLine(String line) {
+    // Try first with the classic format using "-" as delimiter
+    final classicRegex = RegExp(
+      r'^(\w+)\s+-\s+([^:]+):(\d+):(\d+)\s+-\s+(.+)\s+-\s+(\w+(?:_\w+)*)$',
+    );
+    
+    // Try with the newer format using "•" as delimiter
+    final modernRegex = RegExp(
+      r'^(\w+)\s+•\s+(.+)\s+•\s+([^:]+):(\d+):(\d+)\s+•\s+(\w+(?:_\w+)*)$',
+    );
+    
+    final classicMatch = classicRegex.firstMatch(line);
+    final modernMatch = modernRegex.firstMatch(line);
+    
+    if (classicMatch != null) {
+      return AnalyzerIssue(
+        severity: IssueSeverity.fromString(classicMatch.group(1)!),
+        filePath: classicMatch.group(2)!,
+        line: int.parse(classicMatch.group(3)!),
+        column: int.parse(classicMatch.group(4)!),
+        message: classicMatch.group(5)!,
+        code: classicMatch.group(6)!,
+      );
+    } else if (modernMatch != null) {
+      return AnalyzerIssue(
+        severity: IssueSeverity.fromString(modernMatch.group(1)!),
+        message: modernMatch.group(2)!,
+        filePath: modernMatch.group(3)!,
+        line: int.parse(modernMatch.group(4)!),
+        column: int.parse(modernMatch.group(5)!),
+        code: modernMatch.group(6)!,
+      );
+    }
+    
+    return null;
   }
 }
 
