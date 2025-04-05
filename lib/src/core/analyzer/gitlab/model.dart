@@ -12,11 +12,9 @@ class GitLabIssue {
   /// The severity of the violation (info, minor, major, critical, blocker)
   final String severity;
 
+
   /// Location information for the issue
   final GitLabLocation location;
-
-  /// Additional information about the issue
-  final String? additional;
 
   GitLabIssue({
     required this.description,
@@ -24,7 +22,6 @@ class GitLabIssue {
     required this.fingerprint,
     required this.severity,
     required this.location,
-    this.additional,
   });
 
   Map<String, Object?> toJson() {
@@ -34,7 +31,6 @@ class GitLabIssue {
       'fingerprint': fingerprint,
       'severity': severity,
       'location': location.toJson(),
-      if (additional != null) 'additional': additional,
     };
   }
 
@@ -45,7 +41,6 @@ class GitLabIssue {
       fingerprint: json['fingerprint']! as String,
       severity: json['severity']! as String,
       location: GitLabLocation.fromJson(json['location']! as Map<String, Object?>),
-      additional: json['additional'] as String?,
     );
   }
 }

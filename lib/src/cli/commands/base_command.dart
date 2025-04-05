@@ -85,4 +85,16 @@ abstract base class BaseCommand extends Command<void> {
 
     return value as T;
   }
+
+  /// Writes output to a file or standard output.
+  /// 
+  /// If [outputFile] is provided, it writes to that file.
+  /// Otherwise, it writes to standard output.
+  Future<void> writeOutput(String output, {String? outputFile}) async {
+    if (outputFile != null) {
+      await File(outputFile).writeAsString(output);
+    } else {
+      logger.stdout(output);
+    }
+  }
 }

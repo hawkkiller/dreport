@@ -27,12 +27,18 @@ final class AnalyzeConvertCommand extends BaseCommand {
     );
 
     argParser.addOption(
-      'output',
-      abbr: 'o',
+      'format',
+      abbr: 'f',
       help: 'Output format to convert to.',
       allowed: ['gitlab'],
       allowedHelp: {'gitlab': 'Format suitable for GitLab CI.'},
       defaultsTo: 'gitlab',
+    );
+
+    argParser.addOption(
+      'output',
+      abbr: 'o',
+      help: 'Output file to write to. If not provided, writes to stdout.',
     );
   }
 
@@ -44,7 +50,8 @@ final class AnalyzeConvertCommand extends BaseCommand {
 
   @override
   Future<void> run() async {
-    final output = OutputFormat.fromString(verifyArgProvided<String>('output'));
+    final output = OutputFormat.fromString(verifyArgProvided<String>('format'));
+    final outputFile = argResults?['output'] as String?;
 
     final input = await readInput(
       inputFile: argResults?['input'] as String?,
@@ -62,7 +69,7 @@ final class AnalyzeConvertCommand extends BaseCommand {
       OutputFormat.gitlab => _outputGitlab(parsedInput),
     };
 
-    logger.trace('Output:\n$outputString');
+    await writeOutput(outputString, outputFile: outputFile);
   }
 
   String _outputGitlab(AnalyzerResult parsedInput) {

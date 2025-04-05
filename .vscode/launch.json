@@ -14,6 +14,8 @@
         "convert",
         "--input", 
         "analyzer_log.txt",
+        "--output",
+        "analyzer_log.json",
         "-v"
       ],
     },

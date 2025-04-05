@@ -53,7 +53,6 @@ class GitLabIssueEncoder extends Converter<AnalyzerIssue, GitLabIssue> {
         lines: GitLabLines(begin: issue.line),
         positions: GitLabPositions(begin: GitLabPosition(line: issue.line, column: issue.column)),
       ),
-      additional: issue.additional,
     );
   }
 }
@@ -86,7 +85,6 @@ class GitLabIssueDecoder extends Converter<GitLabIssue, AnalyzerIssue> {
       column: gitlabIssue.location.positions.begin.column,
       message: gitlabIssue.description,
       code: gitlabIssue.checkName,
-      additional: gitlabIssue.additional,
     );
   }
 }
