@@ -12,7 +12,6 @@ class GitLabIssue {
   /// The severity of the violation (info, minor, major, critical, blocker)
   final String severity;
 
-
   /// Location information for the issue
   final GitLabLocation location;
 
