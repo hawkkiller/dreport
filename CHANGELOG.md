@@ -1,3 +1,7 @@
+## 0.0.5
+
+- Support • as delimiter (old format)
+
 ## 0.0.4
 
 - Lower SDK constraint to 3.0.0
