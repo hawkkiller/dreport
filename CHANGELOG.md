@@ -1,3 +1,7 @@
+## 0.0.3
+
+- Added dreport.dart to list of executables in pubspec.yaml
+
 ## 0.0.2
 
 - Fixed LICENSE to be recognized by Pub

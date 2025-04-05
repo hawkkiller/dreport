@@ -1,7 +1,10 @@
 name: dreport
 description: Parse and convert Dart analysis, test reports to other formats.
-version: 0.0.2
+version: 0.0.3
 repository: https://github.com/hawkkiller/dreport
+
+executables:
+  dreport: dreport.dart
 
 environment:
   sdk: ^3.7.2
