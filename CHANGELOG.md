@@ -1,3 +1,7 @@
+## 0.0.6
+
+- Implemented support for reviewdog for analyzer conversion
+
 ## 0.0.5
 
 - Support • as delimiter (old format)

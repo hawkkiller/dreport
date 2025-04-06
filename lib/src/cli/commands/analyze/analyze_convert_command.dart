@@ -4,15 +4,18 @@ import 'dart:convert';
 import 'package:dreport/src/cli/commands/base_command.dart';
 import 'package:dreport/src/core/analyzer/gitlab/gitlab_issue_codec.dart';
 import 'package:dreport/src/core/analyzer/parser.dart';
+import 'package:dreport/src/core/analyzer/rdjson/rdjson_codec.dart';
 
 /// Formats that the analysis results can be converted to.
 enum OutputFormat {
-  gitlab;
+  gitlab,
+  rdjson;
 
   /// Returns the [OutputFormat] corresponding to the given string.
   static OutputFormat fromString(String format) {
     return switch (format) {
       'gitlab' => gitlab,
+      'rdjson' => rdjson,
       _ => throw ArgumentError('Invalid output format: $format'),
     };
   }
@@ -30,8 +33,11 @@ final class AnalyzeConvertCommand extends BaseCommand {
       'format',
       abbr: 'f',
       help: 'Output format to convert to.',
-      allowed: ['gitlab'],
-      allowedHelp: {'gitlab': 'Format suitable for GitLab CI.'},
+      allowed: ['gitlab', 'rdjson'],
+      allowedHelp: {
+        'gitlab': 'Format suitable for GitLab CI.',
+        'rdjson': 'Format suitable for ReviewDog (RDFormat).'
+      },
       defaultsTo: 'gitlab',
     );
 
@@ -39,6 +45,18 @@ final class AnalyzeConvertCommand extends BaseCommand {
       'output',
       abbr: 'o',
       help: 'Output file to write to. If not provided, writes to stdout.',
+    );
+
+    // RDJSON specific options
+    argParser.addOption(
+      'source-name',
+      help: 'Source name for RDJSON format (e.g., dart_analyzer).',
+      defaultsTo: 'dart_analyzer',
+    );
+
+    argParser.addOption(
+      'source-url',
+      help: 'Source URL for RDJSON format.',
     );
   }
 
@@ -67,6 +85,7 @@ final class AnalyzeConvertCommand extends BaseCommand {
 
     final outputString = switch (output) {
       OutputFormat.gitlab => _outputGitlab(parsedInput),
+      OutputFormat.rdjson => _outputRDJson(parsedInput),
     };
 
     await writeOutput(outputString, outputFile: outputFile);
@@ -79,5 +98,14 @@ final class AnalyzeConvertCommand extends BaseCommand {
           .map((issue) => issue.toJson())
           .toList(growable: false),
     );
+  }
+
+  String _outputRDJson(AnalyzerResult parsedInput) {
+    const sourceName = 'dart analyze';
+
+    final rdJsonCodec = createRDJsonCodec(sourceName: sourceName);
+
+    final rdResult = rdJsonCodec.encode(parsedInput);
+    return jsonEncode(rdResult.toJson());
   }
 }
